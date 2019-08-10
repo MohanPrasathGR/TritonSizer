@@ -1,0 +1,5 @@
+-libpath ./lib_contest
+-dbpath  ./lib_contest
+-lib contest_hvt.lib
+-suffix_hvt HVT
+

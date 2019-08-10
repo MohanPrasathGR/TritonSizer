@@ -49,3 +49,16 @@ Contact: Minsoo Kim, mik226@eng.ucsd.edu
 ### Authors
 - Hyein Lee and Dr. Jiajia Li (Ph.D. advisors: Prof. Andrew B. Kahng)
 - Many subsequent improvements were made by Minsoo Kim leading up to the initial release.
+
+### Mohan - Update
+28nm library files located in src/lib_28
+cmd file - src/cmd_file
+env file - src/env_file
+
+Test library downloaded from a contest - src/lib_contest
+cmd file - src/cmd_contest
+env file - src/env_contest
+
+Added pci_bridge32_fast verilog,sdc,spef files to run the sizer (inside src)
+
+Status: read_liberty is done. Tool crashes during the link_verilog process.

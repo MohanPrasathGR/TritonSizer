@@ -1,0 +1,68 @@
+------------------------------------------------------
+  TrionSizer ver 1.0                                
+  coded by Hyein Lee and Jiajia Li                    
+------------------------------------------------------
+----------- Report Options -----------
+Thread Number  : 4
+PT Port        : 7474
+PT Number      : 1
+PRFT PT Number : 4
+Delay Metric   : ND
+Slew Metric    : PERI
+Cap. Metric    : CTOT
+GTR. Metric    : SF8/SF8
+Test Mode      : NO_TEST
+ALPHA          : 0.5
+TRIAL RATE     : 0.3
+Use Timer
+Correlated with Timer -SLK
+--------- Design Information ---------
+TOP NAME       : pci_bridge32_fast
+VERILOG FILE   : ./pci_bridge32_fast.v
+SPEF FILE      : pci_bridge32_fast.spef
+DEF FILE       : pci_bridge32_fast.def
+SDC FILE       : ./pci_bridge32_fast.sdc
+TIMER SDC FILE : 
+CLOCK PORT     : clk
+------ Environment Information -------
+HOME           : 
+DB PATH        : ./lib_contest
+LIB PATH       : ./lib_contest
+DB LIST        : 
+MIN DB LIST    : 
+LIB LIST       : contest_hvt.lib
+ENV LIB LIST   : 
+SUFFIX LIST    : 
+LEF LIST       : 
+SUFFIX NVT     : 
+SUFFIX LVT     : 
+SUFFIX HVT     : HVT
+SUFFIX         : 
+--------------------------------------
+DONT TOUCH LIST       : 
+DONT TOUCH CELL LIST       : 
+DONT USE LIST       : 
+BENCHMARK            : pci_bridge32_fast
+BENCHMARK DIRECTORY  : /pci_bridge32_fast/
+
+Parsing lib...     contest_hvt.lib
+Reading .lib file ./lib_contest/contest_hvt.lib for corner 0
+Library name = contest
+Time unit = 1e-12s
+Voltage unit = 1V
+Current unit = 0.001A
+Leakage power unit = 1e-06W
+Cap unit = 1e-15F
+Default voltage = 0.7
+Default maximum transition is 3e-10
+Internal power unit = 0.001W
+Switching power unit = 1e-15W
+Load design... pci_bridge32_fast
+STA CREATED
+define_corner done
+LIB FILE NAME : ./lib_contest/contest_hvt.lib
+read_liberty done
+read_verilog done : 1
+link_design done : 1
+linked: pci_bridge32_fast
+read_parasitics done : 1

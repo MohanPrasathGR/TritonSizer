@@ -922,6 +922,8 @@ void Circuit::lib_parser(string filename, unsigned corner) {
 
     read_head_info(is, lib, corner);
 
+    //cout<<"923 done"<<endl;
+
     if(_sizer->maxTran[corner] == 0.0) {
         _sizer->maxTran[corner] = 0.5;
     }
@@ -952,7 +954,7 @@ void Circuit::lib_parser(string filename, unsigned corner) {
             cell.name = tokens[1];
             string cellName = cell.name;
             cell.dontUse = isDontUse(cell.name);
-            // cout << "Reading cell " << cell.name << endl;
+            //cout << "Reading cell " << cell.name << endl;
             _begin_read_cell_info(is, cell, lib);
 
             // Find Vt of the cell
@@ -985,6 +987,7 @@ void Circuit::lib_parser(string filename, unsigned corner) {
             }
         }
     }
+
 
     _sizer->LIBs.insert(pair< string, LibInfo >(lib.name, lib));
 
@@ -1322,7 +1325,7 @@ string Circuit::_begin_read_power_info(istream& is, string toPin,
         else if(tokens[0] == "related_pin") {
             related_pin = tokens[1];
         }
-        else if(tokens[0] == "related_pg_pin") {
+        else if(tokens[0] == "related_pin") {
             pg_pin = tokens[1];
         }
         else if(tokens[0] == "when") {
@@ -1349,7 +1352,7 @@ void Circuit::_begin_read_lut(istream& is, LibLUT& lut, string type,
                               LibInfo lib) {
     std::vector< string > tokens;
 
-    bool flag;
+    bool flag = false;
 
     LibTableTempl& templ = lib.templs[lut.templ];
     // cout << "Table template name " << templ.name << endl;
@@ -1417,6 +1420,7 @@ void Circuit::_begin_read_lut(istream& is, LibLUT& lut, string type,
         }
     }
 
+
     if(tokens.size() == 1) {
         // flag indicates the "value" takes one line
         flag = true;
@@ -1471,6 +1475,8 @@ void Circuit::_begin_read_lut(istream& is, LibLUT& lut, string type,
             if(flag || i != 0) {
                 read_line_as_tokens_chk(is, tokens);
             }
+                //cout << i<<" "<<flag<<" " <<tokens[0]<<endl;
+            
             lut.tableVals[i].resize(size2);
             for(unsigned j = 0; j < size2; ++j) {
                 lut.tableVals[i][j] = atof(tokens[j].c_str()) * ratio;
@@ -1487,6 +1493,8 @@ void Circuit::_begin_read_lut(istream& is, LibLUT& lut, string type,
             if(flag || i != 0) {
                 read_line_as_tokens_chk(is, tokens);
             }
+               // cout << i<<" "<<flag << " "<<tokens[0]<<endl;
+            
             for(unsigned j = 0; j < size2; ++j) {
                 lut.tableVals[j][i] = atof(tokens[j].c_str()) * ratio;
             }
@@ -1498,6 +1506,7 @@ void Circuit::_begin_read_lut(istream& is, LibLUT& lut, string type,
 }
 
 void Circuit::add_pg_pin(LibPowerInfo& powerTables, string pg_pin) {
+    //cout<<"pgpins_size "<<powerTables.pgPins.size()<<endl;
     for(unsigned i = 0; i < powerTables.pgPins.size(); ++i) {
         if(powerTables.pgPins[i] == pg_pin) {
             return;
@@ -1595,6 +1604,7 @@ int read_line_as_tokens_chk(istream& is, vector< string >& tokens) {
     tokens.clear();
     string line;
     std::getline(is, line);
+    
 
     int chkBrac = 0;
 
@@ -1604,6 +1614,7 @@ int read_line_as_tokens_chk(istream& is, vector< string >& tokens) {
         char currChar = line[i];
         bool isSpecialChar = is_special_char(currChar);
         chkBrac += check_brac(currChar);
+       //if((currChar == '{') || (currChar == '}')){cout<<currChar<<endl;}
 
         if(std::isspace(currChar) || isSpecialChar) {
             if(!token.empty()) {
@@ -1620,7 +1631,8 @@ int read_line_as_tokens_chk(istream& is, vector< string >& tokens) {
 
     if(!token.empty())
         tokens.push_back(token);
-
+    //if(chkBrac != 0) cout << line << endl;
+    //cout<<"return chkBrac = "<<chkBrac<<endl;
     return chkBrac;
 }
 
@@ -2100,11 +2112,14 @@ string Circuit::_begin_read_timing_info(istream& is, string toPin,
 
     while(!finishedReading) {
         check += read_line_as_tokens_chk(is, tokens);
+        
+       // cout<<"check "<<check<<endl;
+       // if(check > 100) break;
 
         if(check == 0) {
             finishedReading = true;
         }
-
+        
         if(tokens.size() == 0) {
             continue;
         }
@@ -2119,6 +2134,7 @@ string Circuit::_begin_read_timing_info(istream& is, string toPin,
                 timing.fallDelay.templ = tokens[1];
                 // cout << "read fall delay table" << endl;
                 _begin_read_lut(is, timing.fallDelay, "timing", lib);
+                //cout<<"fall_lut_over"<<endl;                
             }
         }
         else if(tokens[0] == "cell_rise" ||
@@ -2169,6 +2185,7 @@ string Circuit::_begin_read_timing_info(istream& is, string toPin,
         else if(tokens[0] == "related_pin") {
             assert(tokens.size() == 2);
             timing.fromPin = tokens[1];
+            //cout<<"relatedpin "<<tokens[1]<<endl;
         }
         else if(tokens[0] == "timing_type") {
             if(tokens[1].find("setup") != -1) {
@@ -2243,7 +2260,6 @@ void Circuit::_begin_read_pin_info(istream& is, string pinName, LibPinInfo& pin,
 
             tmplib.isFunc = false;
             tmplib.cnt = 1;
-
             unsigned relatedPinId, curPinId;
             string relatedPin =
                 _begin_read_power_info(is, pinName, tmplib, lib);
@@ -2252,14 +2268,16 @@ void Circuit::_begin_read_pin_info(istream& is, string pinName, LibPinInfo& pin,
                 if(cell.lib_pin2id_map.find(relatedPin) ==
                    cell.lib_pin2id_map.end()) {
                     relatedPinId = cell.lib_pin2id_map.size();
+                   // cout<<"relatedpinId "<<relatedPinId<<" ";
                     // cell.lib_pin2id_map[relatedPin] = relatedPinId;
                     cell.lib_pin2id_map.insert(
                         pair< string, unsigned >(relatedPin, relatedPinId));
-                    // cout << "ADD PIN " << cell.name << "/" << relatedPin << "
-                    // " << cell.lib_pin2id_map[relatedPin] << endl;
+                     //cout << "ADD PIN " << cell.name << "/" << relatedPin << " " << cell.lib_pin2id_map[relatedPin] << endl;
                 }
                 else {
                     relatedPinId = cell.lib_pin2id_map[relatedPin];
+                    //cout<<"relatedpinId "<<relatedPinId<<" ";                    
+                     //cout << "ADD PIN " << cell.name << "/" << relatedPin << " _ " << cell.lib_pin2id_map[relatedPin] << endl;
                 }
 
                 // curPin Id
@@ -2267,29 +2285,33 @@ void Circuit::_begin_read_pin_info(istream& is, string pinName, LibPinInfo& pin,
                    cell.lib_pin2id_map.end()) {
                     curPinId = cell.lib_pin2id_map.size();
                     // cell.lib_pin2id_map[pinName] = curPinId;
+                    //cout<<"currentpinId "<<curPinId<<endl;                    
                     cell.lib_pin2id_map.insert(
                         pair< string, unsigned >(pinName, curPinId));
-                    // cout << "ADD PIN " << cell.name << "/" << pinName << " "
-                    // << cell.lib_pin2id_map[pinName] << endl;
+                     //cout << "ADD PIN " << cell.name << "/" << pinName << " "<< cell.lib_pin2id_map[pinName] << endl;
                 }
                 else {
                     curPinId = cell.lib_pin2id_map[pinName];
+                    //cout<<"currentpinId "<<curPinId<<endl;                                        
+                    //cout << "ADD PIN " << cell.name << "/" << pinName << " | "<< cell.lib_pin2id_map[pinName] << endl;
                 }
                 // JLPWR
 
                 if(relatedPinId != curPinId) {
                     // unsigned index = relatedPinId*100 + curPinId;
                     unsigned index = relatedPinId + curPinId * 100;
+                    //cout<<"index "<<index<<endl;
                     if(cell.powerTables.find(index) != cell.powerTables.end()) {
                         merge_powerTables(cell.powerTables[index], tmplib);
+                        
                     }
-                    else {
-                        cell.powerTables.insert(
+                    else { 
+                      cell.powerTables.insert(
                             pair< unsigned, LibPowerInfo >(index, tmplib));
-                    }
+                                            }
                 }
 
-                // cout << "Read " << cell.powerTables.size() << " power tables"
+                 //cout << "Read " << cell.powerTables.size() << " power tables"
                 // << endl;
             }
             --check;
@@ -2306,8 +2328,9 @@ void Circuit::_begin_read_pin_info(istream& is, string pinName, LibPinInfo& pin,
             tmplib.cnt3 = 1;
 
             // Read timing info
+
             fromPin = _begin_read_timing_info(is, pinName, tmplib, lib);
-            // cout << "fromPin: " << fromPin << " toPin: " << pinName << endl;
+            //cout << "fromPin: " << fromPin << " toPin: " << pinName << endl;
 
             if(fromPin != "") {
                 // JLPWR
@@ -2411,6 +2434,7 @@ void Circuit::_begin_read_cell_info(istream& is, LibCellInfo& cell,
     std::vector< string > tokens;
     while(!finishedReading) {
         check += read_line_as_tokens_chk(is, tokens);
+       // cout << "check: " << check <<endl;
         if(check == 0) {
             finishedReading = true;
             // assign leakage power
@@ -2423,6 +2447,7 @@ void Circuit::_begin_read_cell_info(istream& is, LibCellInfo& cell,
                     cell.leakagePower = 0.0;
             }
             if(cell.footprint == "" || NO_FOOTPRINT) {
+                //cout<<"footprint check" << endl;
                 cell.footprint = cell.name;
                 if(VERBOSE > 1)
                     cout << "GET FOOTPRINT FOR " << cell.footprint << endl;
@@ -2458,7 +2483,7 @@ void Circuit::_begin_read_cell_info(istream& is, LibCellInfo& cell,
                     // cell.footprint << endl;
                 }
             }
-            // cout << "Finish reading cell " << cell.name << endl;
+            //cout << "Finish reading cell " << cell.name << endl;
         }
 
         if(tokens.size() == 0) {
@@ -2503,7 +2528,6 @@ void Circuit::_begin_read_cell_info(istream& is, LibCellInfo& cell,
         else if(tokens.size() == 2 && tokens[0] == "pin") {
             LibPinInfo pin;
             _begin_read_pin_info(is, tokens[1], pin, cell, lib);
-
             if(cell.lib_pin2id_map.find(pin.name) ==
                cell.lib_pin2id_map.end()) {
                 unsigned pin_id = cell.lib_pin2id_map.size();
@@ -2816,8 +2840,14 @@ void Circuit::merge_powerTables(LibPowerInfo& power1, LibPowerInfo& power2) {
         if(power2.risePower.templ != "") {
             update_lut(power1.risePower, power2.risePower);
         }
-        add_pg_pin(power1, power2.pgPins[0]);
+        //cout<<"add_pg "<<endl;
+       // cout<<"pgpins "<<endl;
+        
+        //cout<< power2.pgPins[0]<<endl;
+
+        //add_pg_pin(power1, power2.pgPins[0]);
         ++power1.cnt;
+        //cout<<"addpgover"<<endl;
     }
 }
 
@@ -2884,6 +2914,7 @@ void Circuit::init_opensta(sta::Sta* _sta) {
                                       _sta->debug(), _sta->networkReader());
     }
     cout << "read_verilog done : " << readVerilog << endl;
+    //cout << "test" << endl; 
 
     // link_design
     bool link = _sta->linkDesign(top_cell_name.c_str());

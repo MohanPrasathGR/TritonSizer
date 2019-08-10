@@ -1,0 +1,6 @@
+-libpath ./lib_28
+-dbpath  ./lib_28
+-lib fsj0l_ehs_generic_core_tt1p05v25c_hvt.lib
+-db fsj0l_ehs_generic_core_tt1p05v25c_hvt.db
+-suffix_hvt HVT
+

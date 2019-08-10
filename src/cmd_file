@@ -1,0 +1,25 @@
+
+ -prft_ptnum 4
+ -thread 4
+ -GWTW_max_iter 2
+ -GWTW_div 2
+ -GWTW_num_start 2
+ -prft_only
+ -ptport 7474
+ -top pci_bridge32_fast
+ -v ./cmd_28/pci_bridge32_fast.v
+ -sdc ./cmd_28/pci_bridge32_fast.sdc
+ -noSPEF
+ -noDEF
+ -ptLog
+ -useOpenSTA
+ -alpha 0.5
+ -sf 1
+ -sft 5
+ -kick_ratio 1.0
+ -kick_max_iter 3
+ -opt_effort 2
+ -fix_slew
+ -fix_global
+ -trial_rate 0.3
+ -slack_margin 0
